@@ -1,0 +1,101 @@
+Description:  This template deploys a custom VPC/Subnet requirement
+#619870548849
+#capetown
+#[ZAF-NPRD-TC01490-DEV] SA Mobile Android
+#samobileandroid
+Parameters:
+
+  # VPC
+
+  VPCCIDR:
+    Default: 10.109.0.0/16
+    Description: IP range (CIDR notation) for this VPC
+    Type: String
+
+  VPCName:
+    Default: 'samobileandroid-non-prod-vpc'
+    Description: Name of the VPC
+    Type: String
+
+
+  # PrivateSubnet1ACIDREKS:
+  #   Default: 10.254.0.0/17
+  #   Description: IP range (CIDR notation) for the private subnet 2A
+  #   Type: String
+
+  # PrivateSubnet1ANameEKS:
+  #   Default: 'EKS Subnet'
+  #   Description: Name of subnet 2B
+  #   Type: String
+
+Resources:
+
+  # VPC
+
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref 'VPCCIDR'
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+
+    # # EKS Subnet
+
+  PrivateSubnet1AEKS:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 0, !GetAZs  '' ]
+      CidrBlock: !Select [ 0, !Cidr  [ !GetAtt VPC.CidrBlock, 12, 3]]
+
+  PrivateSubnet2AEKS:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 1, !GetAZs  '' ]
+      CidrBlock: !Select [ 1, !Cidr  [ !GetAtt VPC.CidrBlock, 12, 3]]
+
+  PrivateSubnet3AEKS:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 2, !GetAZs  '' ]
+      CidrBlock: !Select [ 2, !Cidr  [ !GetAtt VPC.CidrBlock, 12, 3]]
+
+  PrivateSubnet1BEKS:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 0, !GetAZs  '' ]
+      CidrBlock: !Select [ 3, !Cidr  [ !GetAtt VPC.CidrBlock, 12, 7]]
+
+  PrivateSubnet2BEKS:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 1, !GetAZs  '' ]
+      CidrBlock: !Select [ 4, !Cidr  [ !GetAtt VPC.CidrBlock, 12, 7]]
+
+  PrivateSubnet3BEKS:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 2, !GetAZs  '' ]
+      CidrBlock: !Select [ 5, !Cidr  [ !GetAtt VPC.CidrBlock, 12, 7]]
+
+
+# Outputs:
+
+#   # PublicSubnet1A
+
+#   PrivateSubnet1AEKS:
+#     Description: Public subnet 1A CIDR in Availability Zone 1
+#     Value: !Select [ 0, !Cidr  [ !GetAtt VPC.CidrBlock, 4, 8]]
+#     Export:
+#       Name: !Sub '${AWS::StackName}-PrivateSubnet1AEKS'
+  
+#   PrivateSubnet2AEKS:
+#     Description: Public subnet 2A CIDR in Availability Zone 1
+#     Value: !Select [ 0, !Cidr  [ !GetAtt VPC.CidrBlock, 1, 9]]
+#     Export:
+#       Name: !Sub '${AWS::StackName}-PrivateSubnet2AEKS'
